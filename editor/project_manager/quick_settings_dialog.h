@@ -81,8 +81,6 @@ protected:
 	static void _bind_methods();
 
 public:
-	void update_size_limits(const Size2 &p_max_popup_size);
-
 	QuickSettingsDialog();
 };
 

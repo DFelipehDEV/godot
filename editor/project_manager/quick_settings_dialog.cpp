@@ -167,9 +167,6 @@ void QuickSettingsDialog::_request_restart() {
 	emit_signal("restart_required");
 }
 
-void QuickSettingsDialog::update_size_limits(const Size2 &p_max_popup_size) {
-}
-
 void QuickSettingsDialog::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {

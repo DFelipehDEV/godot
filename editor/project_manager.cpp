@@ -40,7 +40,6 @@
 #include "editor/editor_about.h"
 #include "editor/editor_settings.h"
 #include "editor/editor_string_names.h"
-#include "editor/engine_update_label.h"
 #include "editor/gui/editor_file_dialog.h"
 #include "editor/gui/editor_title_bar.h"
 #include "editor/gui/editor_version_button.h"
@@ -169,12 +168,6 @@ void ProjectManager::_update_size_limits() {
 		window_position.x = screen_rect.position.x + (screen_rect.size.x - default_size.x) / 2;
 		window_position.y = screen_rect.position.y + (screen_rect.size.y - default_size.y) / 2;
 		DisplayServer::get_singleton()->window_set_position(window_position);
-
-		// Limit popup menus to prevent unusably long lists.
-		// We try to set it to half the screen resolution, but no smaller than the minimum window size.
-		Size2 half_screen_rect = (screen_rect.size * EDSCALE) / 2;
-		Size2 maximum_popup_size = MAX(half_screen_rect, minimum_size);
-		quick_settings_dialog->update_size_limits(maximum_popup_size);
 	}
 }
 
@@ -1038,11 +1031,6 @@ ProjectManager::ProjectManager() {
 
 	set_translation_domain("godot.editor");
 
-	// Turn off some servers we aren't going to be using in the Project Manager.
-	NavigationServer3D::get_singleton()->set_active(false);
-	PhysicsServer3D::get_singleton()->set_active(false);
-	PhysicsServer2D::get_singleton()->set_active(false);
-
 	// Initialize settings.
 	{
 		if (!EditorSettings::get_singleton()) {
@@ -1374,12 +1362,6 @@ ProjectManager::ProjectManager() {
 		footer_bar->set_alignment(BoxContainer::ALIGNMENT_END);
 		footer_bar->add_theme_constant_override("separation", 20 * EDSCALE);
 		main_vbox->add_child(footer_bar);
-
-#ifdef ENGINE_UPDATE_CHECK_ENABLED
-		EngineUpdateLabel *update_label = memnew(EngineUpdateLabel);
-		footer_bar->add_child(update_label);
-		update_label->connect("offline_clicked", callable_mp(this, &ProjectManager::_show_quick_settings));
-#endif
 
 		EditorVersionButton *version_btn = memnew(EditorVersionButton(EditorVersionButton::FORMAT_WITH_BUILD));
 		// Fade the version label to be less prominent, but still readable.
