@@ -74,21 +74,6 @@ void QuickSettingsDialog::_fetch_setting_values() {
 }
 
 void QuickSettingsDialog::_update_current_values() {
-#ifndef ANDROID_ENABLED
-	// Language options.
-	{
-		const String current_lang = EDITOR_GET("interface/editor/editor_language");
-
-		for (int i = 0; i < editor_languages.size(); i++) {
-			const String &lang_value = editor_languages[i];
-			if (current_lang == lang_value) {
-				language_option_button->set_text(current_lang);
-				language_option_button->select(i);
-			}
-		}
-	}
-#endif
-
 	// Theme options.
 	{
 		const String current_theme = EDITOR_GET("interface/theme/preset");
@@ -113,19 +98,6 @@ void QuickSettingsDialog::_update_current_values() {
 			if (current_scale == i) {
 				scale_option_button->set_text(scale_value);
 				scale_option_button->select(i);
-			}
-		}
-	}
-
-	// Network mode options.
-	{
-		const int current_network_mode = EDITOR_GET("network/connection/network_mode");
-
-		for (int i = 0; i < editor_network_modes.size(); i++) {
-			const String &network_mode_value = editor_network_modes[i];
-			if (current_network_mode == i) {
-				network_mode_option_button->set_text(network_mode_value);
-				network_mode_option_button->select(i);
 			}
 		}
 	}
@@ -156,13 +128,6 @@ void QuickSettingsDialog::_add_setting_control(const String &p_text, Control *p_
 	p_control->set_stretch_ratio(2.0);
 	container->add_child(p_control);
 }
-
-#ifndef ANDROID_ENABLED
-void QuickSettingsDialog::_language_selected(int p_id) {
-	const String selected_language = language_option_button->get_item_metadata(p_id);
-	_set_setting_value("interface/editor/editor_language", selected_language, true);
-}
-#endif
 
 void QuickSettingsDialog::_theme_selected(int p_id) {
 	const String selected_theme = theme_option_button->get_item_text(p_id);
@@ -203,9 +168,6 @@ void QuickSettingsDialog::_request_restart() {
 }
 
 void QuickSettingsDialog::update_size_limits(const Size2 &p_max_popup_size) {
-#ifndef ANDROID_ENABLED
-	language_option_button->get_popup()->set_max_size(p_max_popup_size);
-#endif
 }
 
 void QuickSettingsDialog::_notification(int p_what) {
@@ -247,24 +209,6 @@ QuickSettingsDialog::QuickSettingsDialog() {
 		settings_list = memnew(VBoxContainer);
 		settings_list_panel->add_child(settings_list);
 
-#ifndef ANDROID_ENABLED
-		// Language options.
-		{
-			language_option_button = memnew(OptionButton);
-			language_option_button->set_fit_to_longest_item(false);
-			language_option_button->connect(SceneStringName(item_selected), callable_mp(this, &QuickSettingsDialog::_language_selected));
-
-			for (int i = 0; i < editor_languages.size(); i++) {
-				const String &lang_value = editor_languages[i];
-				String lang_name = TranslationServer::get_singleton()->get_locale_name(lang_value);
-				language_option_button->add_item(vformat("[%s] %s", lang_value, lang_name), i);
-				language_option_button->set_item_metadata(i, lang_value);
-			}
-
-			_add_setting_control(TTR("Language"), language_option_button);
-		}
-#endif
-
 		// Theme options.
 		{
 			theme_option_button = memnew(OptionButton);
@@ -300,20 +244,6 @@ QuickSettingsDialog::QuickSettingsDialog() {
 			}
 
 			_add_setting_control(TTR("Display Scale"), scale_option_button);
-		}
-
-		// Network mode options.
-		{
-			network_mode_option_button = memnew(OptionButton);
-			network_mode_option_button->set_fit_to_longest_item(false);
-			network_mode_option_button->connect(SceneStringName(item_selected), callable_mp(this, &QuickSettingsDialog::_network_mode_selected));
-
-			for (int i = 0; i < editor_network_modes.size(); i++) {
-				const String &network_mode_value = editor_network_modes[i];
-				network_mode_option_button->add_item(network_mode_value, i);
-			}
-
-			_add_setting_control(TTR("Network Mode"), network_mode_option_button);
 		}
 
 		// Project directory naming options.

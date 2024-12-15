@@ -95,12 +95,6 @@ void POTGenerator::generate_pot(const String &p_file) {
 		}
 	}
 
-	if (GLOBAL_GET("internationalization/locale/translation_add_builtin_strings_to_pot")) {
-		for (const Vector<String> &extractable_msgids : get_extractable_message_list()) {
-			_add_new_msgid(extractable_msgids[0], extractable_msgids[1], extractable_msgids[2], "", "");
-		}
-	}
-
 	_write_to_pot(p_file);
 }
 

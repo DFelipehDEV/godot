@@ -392,34 +392,8 @@ void EditorSettings::_load_defaults(Ref<ConfigFile> p_extra_config) {
 			WARN_PRINT("Some locales are not properly supported by selected Text Server and are disabled.");
 		}
 
-		String best;
-		int best_score = 0;
-		for (const String &locale : get_editor_locales()) {
-			// Skip locales which we can't render properly (see above comment).
-			// Test against language code without regional variants (e.g. ur_PK).
-			String lang_code = locale.get_slice("_", 0);
-			if (locales_to_skip.has(lang_code)) {
-				continue;
-			}
-
-			lang_hint += ",";
-			lang_hint += locale;
-
-			int score = TranslationServer::get_singleton()->compare_locales(host_lang, locale);
-			if (score > 0 && score >= best_score) {
-				best = locale;
-				best_score = score;
-			}
-		}
-		if (best_score == 0) {
-			best = "en";
-		}
-
-		EDITOR_SETTING_USAGE(Variant::STRING, PROPERTY_HINT_ENUM, "interface/editor/editor_language", best, lang_hint, PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_RESTART_IF_CHANGED | PROPERTY_USAGE_EDITOR_BASIC_SETTING);
+		EDITOR_SETTING_USAGE(Variant::STRING, PROPERTY_HINT_ENUM, "interface/editor/editor_language", "en", lang_hint, PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_RESTART_IF_CHANGED | PROPERTY_USAGE_EDITOR_BASIC_SETTING);
 	}
-
-	// Asset library
-	_initial_set("asset_library/use_threads", true);
 
 	/* Interface */
 
@@ -962,9 +936,6 @@ void EditorSettings::_load_defaults(Ref<ConfigFile> p_extra_config) {
 
 	/* Network */
 
-	// General
-	EDITOR_SETTING_BASIC(Variant::INT, PROPERTY_HINT_ENUM, "network/connection/network_mode", 0, "Offline,Online");
-
 	// HTTP Proxy
 	_initial_set("network/http_proxy/host", "");
 	EDITOR_SETTING(Variant::INT, PROPERTY_HINT_RANGE, "network/http_proxy/port", 8080, "1,65535,1")
@@ -1252,19 +1223,6 @@ fail:
 void EditorSettings::setup_language() {
 	String lang = get("interface/editor/editor_language");
 	TranslationServer::get_singleton()->set_locale(lang);
-
-	if (lang == "en") {
-		return; // Default, nothing to do.
-	}
-	// Load editor translation for configured/detected locale.
-	load_editor_translations(lang);
-	load_property_translations(lang);
-
-	// Load class reference translation.
-	load_doc_translations(lang);
-
-	// Load extractable translation for projects.
-	load_extractable_translations(lang);
 }
 
 void EditorSettings::setup_network() {

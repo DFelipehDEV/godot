@@ -40,8 +40,7 @@
 #include "scene/main/http_request.h"
 
 bool EngineUpdateLabel::_can_check_updates() const {
-	return int(EDITOR_GET("network/connection/network_mode")) == EditorSettings::NETWORK_ONLINE &&
-			UpdateMode(int(EDITOR_GET("network/connection/engine_version_update_mode"))) != UpdateMode::DISABLED;
+	return false;
 }
 
 void EngineUpdateLabel::_check_update() {
@@ -184,11 +183,7 @@ void EngineUpdateLabel::_set_status(UpdateStatus p_status) {
 	switch (status) {
 		case UpdateStatus::OFFLINE: {
 			set_disabled(false);
-			if (int(EDITOR_GET("network/connection/network_mode")) == EditorSettings::NETWORK_OFFLINE) {
-				_set_message(TTR("Offline mode, update checks disabled."), theme_cache.disabled_color);
-			} else {
-				_set_message(TTR("Update checks disabled."), theme_cache.disabled_color);
-			}
+			_set_message(TTR("Update checks disabled."), theme_cache.disabled_color);
 			set_tooltip_text("");
 			break;
 		}

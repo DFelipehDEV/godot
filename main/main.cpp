@@ -3690,11 +3690,6 @@ int Main::start() {
 		// Needed to instance editor-only classes for their default values
 		Engine::get_singleton()->set_editor_hint(true);
 
-		// Translate the class reference only when `-l LOCALE` parameter is given.
-		if (!locale.is_empty() && locale != "en") {
-			load_doc_translations(locale);
-		}
-
 		{
 			Ref<DirAccess> da = DirAccess::open(doc_tool_path);
 			ERR_FAIL_COND_V_MSG(da.is_null(), EXIT_FAILURE, "Argument supplied to --doctool must be a valid directory path.");

@@ -57,11 +57,6 @@ public:
 		Vector<String> install_files;
 	};
 
-	enum NetworkMode {
-		NETWORK_OFFLINE,
-		NETWORK_ONLINE,
-	};
-
 	enum InitialScreen {
 		INITIAL_SCREEN_AUTO = -5, // Remembers last screen position.
 		INITIAL_SCREEN_WITH_MOUSE_FOCUS = -4,
